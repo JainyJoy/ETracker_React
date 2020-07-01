@@ -1,4 +1,5 @@
-import React from 'react';
+// import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles, withStyles, useTheme } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -6,14 +7,15 @@ import Typography from '@material-ui/core/Typography';
 import SwipeableViews from 'react-swipeable-views';
 import PropTypes from 'prop-types';
 import Box from '@material-ui/core/Box';
-
+import { Grid } from '@material-ui/core';
 import './Style.css';
 import TotalBarmn from './TotalBarmn';
 import LineChartmn from './LineChartmn';
 import CategoryBarmn from './CategoryBarmn';
 import * as API from '../constants/Api';
-
-
+import YearMonthPicker from './MonthPicker1';
+import YearPickerComp from './YearPicker';
+import {DateProvider}  from './DateContext';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -107,7 +109,37 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
+
+
 export default function CustomizedTabs(props) {
+
+  const [month, setMonth] = useState(6);
+  const [year, setYear] = useState(2020);
+
+// var month =month;
+// var year=year;
+
+
+
+  const updateMonthpicker= (value)=>{
+     console.log(value);
+    //  month=value.month;
+    //  year=value.year;
+     setMonth(value.month);
+     setYear(value.year);
+     
+  };
+
+  // setMonth(value.month);
+  //   setYear(value.year);
+  //    console.log(setMonth,setYear)
+
+  const updateYearpicker= (now)=>{
+    console.log(now)
+  //  this.setState({Year:now.$Y})
+ };
+
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
@@ -118,13 +150,19 @@ export default function CustomizedTabs(props) {
   const handleChangeIndex = (index) => {
     setValue(index);
   };
+  
+  
+ 
 
   return (
+    
     <div className={classes.root}>
       <div className={classes.demo1}>
+      <DateProvider>
         <AntTabs value={value} onChange={handleChange} aria-label="ant example">
           <AntTab label="Month" {...a11yProps(0)}/>
           <AntTab label="Year" {...a11yProps(1)}/>
+          <AntTab></AntTab> 
           
         </AntTabs>
         <Typography className={classes.padding} />
@@ -133,29 +171,48 @@ export default function CustomizedTabs(props) {
         onChangeIndex={handleChangeIndex}>
 
         <TabPanel  value={value} index={0} dir={theme.direction} >
-        
+          <div>
+        <Grid >
+          <YearMonthPicker  onMonthChange={updateMonthpicker}/> 
+        </Grid> 
+          </div>
           <div id="cbar">
-        < TotalBarmn  message = {props.message} api ={API.BAR_MONTH}/>
+        < TotalBarmn 
+        
+         message = {props.message} 
+         month ={month} 
+         year={year} 
+         api = {API.BAR_MONTH}/>
         </div>
         <div id="cline">
-        <LineChartmn  message = {props.message}  api = {API.LINE_MONTH}/>
+        <LineChartmn   message = {props.message}  api = {API.LINE_MONTH}/>
         </div>
-        <CategoryBarmn  message = {props.message} api ={API.CAT_BAR_MONTH}/>
+        <div id="catbar">
+        <CategoryBarmn   message = {props.message} api ={API.CAT_BAR_MONTH}/>
+        </div>
       </TabPanel>
 
         <TabPanel  value={value} index={1} dir={theme.direction} >
+        <div><YearPickerComp onYearChange={updateYearpicker} /> </div> 
         <div id="cbar">
         < TotalBarmn  message = {props.message} api ={API.BAR_YEAR}/>
         </div>
         <div id="cline">
         <LineChartmn  message = {props.message} api = {API.LINE_YEAR}/>
         </div>
+        <div id="catbar" >
+           
         <CategoryBarmn  message = {props.message} api ={API.CAT_BAR_YEAR}/>
+        
+        </div>
         </TabPanel>
         
       </SwipeableViews>
+      </DateProvider>
       </div>
 
     </div>
   );
 }
+
+

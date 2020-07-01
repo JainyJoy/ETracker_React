@@ -1,57 +1,143 @@
-import React, { Component } from 'react';
+import React, {useState, useEffect,useContext } from 'react';
 import {HorizontalBar} from 'react-chartjs-2';
 import axios from 'axios';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { Grid } from "@material-ui/core";
+import * as API from '../constants/Api';
+import { DateContext } from './DateContext';
 
-export default class TotalBarmn extends Component
-{
-   constructor(props) {
-      super(props);
-      this.state = {
-        Data: {},
+// export default class TotalBarmn extends React.Component
+// {
+//    constructor(props,context) {
+//       super(props);
+//       this.state = {
+//         Data: {},
+
       
-      }
-    }
+//       }
+//     }
     
-      componentDidMount() {
-        axios.get(this.props.api,{params:{userId: this.props.message}})
-          .then(res => {
-            let amount=[];
-            amount.push(res.data.TotalIncome);
-            amount.push(res.data.TotalExpense);
+//       componentDidMount() {
+        
+
+//         // const endpoint = this.props.month ?API.TOTALMN_ENDPT:API.TOTALYR_ENDPT; 
+//         // const api_url=API.BAR_URL + endpoint;
+//         // const params= {userId: this.props.message, year:this.props.year};
+//         // if (this.props.month){
+//         //   params.month=this.props.month;
+//         // }
+//         // const month = useContext(DateContext);
+//         // const year = useContext(DateContext);
+//         // // console.log(month);
+ 
+//         // axios.get(api_url,{params:params})
+//         axios.get(this.props.api,{params:{userId: this.props.message,year:this.context.date.year,month:this.context.date.month}})
+//           .then(res => {
+//             let amount=[];
+//             amount.push(res.data.TotalIncome);
+//             amount.push(res.data.TotalExpense);
 
           
 
-            this.setState({ 
-              Data: {
-                labels:['Income','Expense'],
-                datasets:[
-                   {
-                      data: amount,
-                      borderColor: '  rgb(255, 255, 255)',
-                      backgroundColor:["#69B5FF","#F35B8c"]
+//             this.setState({ 
+//               Data: {
+//                 labels:['Income','Expense'],
+//                 datasets:[
+//                    {
+//                       data: amount,
+//                       borderColor: '  rgb(255, 255, 255)',
+//                       backgroundColor:["#69B5FF","#F35B8c"]
                     
-                   }
-                ]
-             }
-             });
-          }).catch(error => {console.log(error)
-            this.setState({ErrorMessage:"Error in retrieving data"})
-          }) 
-        }
- render()
-   {
-     return(
-      <div>
-          <HorizontalBar
-            data = {this.state.Data}
-            options = {chartoptions}
-            width= {400} 
-            plugins={[ChartDataLabels]} />
-        </div>
-      )
-   }   
-}
+//                    }
+//                 ]
+//              }
+//              });
+//           }).catch(error => {console.log(error)
+//             this.setState({ErrorMessage:"Error in retrieving data"})
+//           }) 
+//         }
+//  render()
+//    {
+//      return(
+      
+//       <Grid>
+//         <DateConsumer>
+//         value=context.state.date;
+//           <HorizontalBar
+//             data = {this.state.Data}
+//             options = {chartoptions}
+//             width= {400} 
+//             plugins={[ChartDataLabels]} />
+//             </DateConsumer>
+//             </Grid>
+        
+//       )
+//    }   
+// }
+
+
+function TotalBarmn(props){
+  
+  const val=useContext(DateContext);
+  const [Data, setData] = useState([]);
+  const [errorMessage, seterrorMessage] = useState('');
+  
+  
+  const datapass=(val)=>{
+    // return(
+    // <DateContext.Consumer>
+    //   monthval={context.monthval}
+    //   yearval={context.yearval}
+    // </DateContext.Consumer>);
+
+    console.log(val);
+    // console.log(val.yearval,val.monthval);
+  }
+
+  useEffect(() => {
+    axios.get(props.api,{params:{userId: props.message,year:val.yearval,month:val.monthval}})
+              .then(res => {
+                let amount=[];
+                amount.push(res.data.TotalIncome);
+                amount.push(res.data.TotalExpense);
+    
+              
+    
+                setData({ 
+                  Data: {
+                    labels:['Income','Expense'],
+                    datasets:[
+                       {
+                          data: amount,
+                          borderColor: '  rgb(255, 255, 255)',
+                          backgroundColor:["#69B5FF","#F35B8c"]
+                        
+                       }
+                    ]
+                 }
+                 });
+              }).catch(error => {console.log(error)
+                seterrorMessage({errorMessage:"Error in retrieving data"});
+              });
+            },[]);
+     
+         return(
+          // <div>
+          // <DateContext.Consumer ></DateContext.Consumer>
+          <Grid>
+
+              <HorizontalBar
+                data = {Data}
+                options = {chartoptions}
+                width= {400} 
+                plugins={[ChartDataLabels]} />
+                </Grid>
+            // </div>
+          );
+       } ;
+export default TotalBarmn;  
+
+
 
 const chartoptions = {
 
@@ -120,31 +206,6 @@ plugins: {
     }
   }
 }
-
-
-// animation: {
-//  duration: 1,
-//  onComplete: function () {
-//      var chartInstance = this.chart,
-//          ctx = chartInstance.ctx;
-//      ctx.textAlign = 'left';
-    
-//      ctx.fillStyle = "rgba(255, 255, 255, 255)";
-//      ctx.textBaseline = 'centre';
-     
-     
-
-//      this.data.datasets.forEach(function (dataset, i) {
-//          var meta = chartInstance.controller.getDatasetMeta(i);
-//          meta.data.forEach(function (bar, index) {
-//              var data = dataset.data[index];
-//              ctx.fillText(data, (bar._model.x-bar._model.x)+10, bar._model.y -5);
-             
-
-//          });
-//      });
-//  }
-// }
 }
 
  

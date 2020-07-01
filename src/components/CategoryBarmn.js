@@ -3,6 +3,7 @@ import {HorizontalBar} from 'react-chartjs-2';
 import axios from 'axios';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import Chart from "chart.js";
+import { Grid } from "@material-ui/core";
 Chart.plugins.unregister(ChartDataLabels);
 export default class Categorybarmn extends Component
 {
@@ -43,14 +44,16 @@ export default class Categorybarmn extends Component
  render()
    {
      return(
-      <div>
+      // <div>
+      <Grid>
           <HorizontalBar
             data = {this.state.Data}
             options = {chartoptions} 
             width= {350}
             height={100} 
             plugins={[ChartDataLabels]}/>
-        </div>
+        {/* </div> */}
+        </Grid>
       )
    }   
 }

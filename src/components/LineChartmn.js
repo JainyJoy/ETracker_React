@@ -1,6 +1,7 @@
 import React from "react";
 import { Line } from "react-chartjs-2";
 import axios from 'axios';
+import { Grid } from "@material-ui/core";
 export default class LineChartmn extends React.Component {
   constructor(props) {
     super(props);
@@ -12,15 +13,15 @@ export default class LineChartmn extends React.Component {
     axios.get(this.props.api,{params:{userId: this.props.message}})
       .then(res => {
         const response = res.data;
-        let day=[];
+        let label=[];
         let amount = [];
         Array.from(response).forEach(element => {
-          day.push(element.Day);
+          label.push(element.label);
           amount.push(element.TotalExpense);
         });
         this.setState({ 
           Data: {
-            labels:day,
+            labels:label,
             datasets:[
                {
           data: amount,
@@ -65,13 +66,12 @@ export default class LineChartmn extends React.Component {
 
   render() {
     return (
-      <div>
+      // <div>
+      <Grid>
         <Line data={this.state.Data} 
-        options={this.state.options}
-        
-         />
-      </div>
+        options={this.state.options} />
+      {/* // </div> */}
+      </Grid>
     )
   }
 }
-
